@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+  #  KANYE QUOTES
+  kanye-quotes:
+    container_name: kanye-quotes
+    image: grzesiekoladele/kanye-quotes:v1
+    ports:
+      - "9000:9000"
+    restart: always
+    networks:
+      - external-api
+  #  RICK AND MORTY
+  rick-and-morty:
+    container_name: rick-and-morty
+    image: grzesiekoladele/rick-and-morty:v1
+    ports:
+      - "8000:8000"
+    environment:
+      REST-TEMPLATE_PROXY_HOST: proxy
+    restart: always
+    networks:
+      - external-api
+  #  DATABASE
+  reports-db:
+    container_name: reports-db
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: reports-db
+      POSTGRES_PORT: 5432
+    restart: always
+    networks:
+      - external-api
+  #  REPORT SERVICE
+  report-service:
+    container_name: report-service
+    image: grzesiekoladele/report-service:v1
+    ports:
+      - "8200:8200"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reports-db:5432/reports-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      REST-TEMPLATE_PROXY_HOST: proxy
+    restart: always
+    networks:
+      - external-api
+  #  PROXY
+  proxy:
+    container_name: proxy
+    image: grzesiekoladele/proxy:v1
+    ports:
+      - "8100:8100"
+    environment:
+      - REST-TEMPLATE_KANYE_HOST=kanye-quotes
+      - REST-TEMPLATE_RICK-AND-MORTY_HOST=rick-and-morty
+      - REST-TEMPLATE_REPORT_HOST=report-service
+    restart: always
+    networks:
+      - external-api
+networks:
+  external-api:
+    driver: bridge
