@@ -1,4 +1,4 @@
-package pl.grzegorz.rickandmorty.characters;
+package pl.grzegorz.rickandmorty.locations;
 
 import lombok.Getter;
 import pl.grzegorz.rickandmorty.dto.PageInfo;
@@ -6,8 +6,8 @@ import pl.grzegorz.rickandmorty.dto.PageInfo;
 import java.util.List;
 
 @Getter
-class CharactersDto {
+class LocationsDto {
 
     private PageInfo info;
-    private List<FigureDto> results;
+    private List<SiteDto> results;
 }

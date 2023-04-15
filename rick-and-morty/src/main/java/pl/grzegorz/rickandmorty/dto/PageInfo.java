@@ -1,20 +1,20 @@
-package pl.grzegorz.rickandmorty.characters;
+package pl.grzegorz.rickandmorty.dto;
 
 import lombok.Getter;
 
 @Getter
-class PageInfo {
+public class PageInfo {
 
     private int count;
     private int pages;
     private String nextPage;
     private String previousPage;
 
-    void setNextPage(String nextPage) {
+    public void setNextPage(String nextPage) {
         this.nextPage = nextPage;
     }
 
-    void setPreviousPage(String previousPage) {
+    public void setPreviousPage(String previousPage) {
         this.previousPage = previousPage;
     }
 }
