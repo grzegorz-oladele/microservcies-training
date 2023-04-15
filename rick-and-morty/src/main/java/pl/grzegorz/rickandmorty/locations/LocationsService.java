@@ -1,37 +1,38 @@
 package pl.grzegorz.rickandmorty.locations;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.grzegorz.rickandmorty.tools.PageValidator;
 
 @Service
-@RequiredArgsConstructor
 class LocationsService {
 
-    private static final String APP_URL = "http://localhost:8000/locations?pageNumber=";
     private static final int NUMBER_OF_PAGES = 7;
-
     private final LocationsRestTemplateHelper locationsRestTemplateHelper;
-    private final PageValidator pageValidator;
+    private final String proxyUrl;
+
+    LocationsService(LocationsRestTemplateHelper locationsRestTemplateHelper,
+                      @Value("${rest-template.proxy.host}") String proxyHost) {
+        this.locationsRestTemplateHelper = locationsRestTemplateHelper;
+        this.proxyUrl = "http://" + proxyHost + ":8100/api/rick-and-morty/locations?pageNumber=";
+    }
 
     LocationsDto getLocations(int pageNumber) {
-        pageValidator.checkPageNumberValueIsLessOrEqualThanZeroAndMoreThanNumberOfPagesAndThrowExceptionIfIs(pageNumber,
-                NUMBER_OF_PAGES);
+
         if (pageNumber == 1) {
             LocationsDto response = locationsRestTemplateHelper.getLocations(pageNumber);
-            response.getInfo().setNextPage(APP_URL + ++pageNumber);
+            response.getInfo().setNextPage(proxyUrl + ++pageNumber);
             response.getInfo().setPreviousPage(null);
             return response;
         }
-        if (pageNumber <= 41) {
+        if (pageNumber <= NUMBER_OF_PAGES - 1) {
             LocationsDto response = locationsRestTemplateHelper.getLocations(pageNumber);
-            response.getInfo().setNextPage(APP_URL + ++pageNumber);
-            response.getInfo().setPreviousPage(APP_URL + (pageNumber - 2));
+            response.getInfo().setNextPage(proxyUrl + ++pageNumber);
+            response.getInfo().setPreviousPage(proxyUrl + (pageNumber - 2));
             return response;
         }
         LocationsDto response = locationsRestTemplateHelper.getLocations(pageNumber);
         response.getInfo().setNextPage(null);
-        response.getInfo().setPreviousPage(APP_URL + --pageNumber);
+        response.getInfo().setPreviousPage(proxyUrl + --pageNumber);
         return response;
     }
 }

@@ -1,37 +1,37 @@
 package pl.grzegorz.rickandmorty.characters;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.grzegorz.rickandmorty.tools.PageValidator;
 
 @Service
-@RequiredArgsConstructor
 class CharactersService {
 
-    private static final String APP_URL = "http://localhost:8000/characters?pageNumber=";
     private static final int NUMBER_OF_PAGES = 42;
-
     private final CharactersRestTemplateHelper charactersRestTemplateHelper;
-    private final PageValidator pageValidator;
+    private final String proxyUrl;
+
+    CharactersService(CharactersRestTemplateHelper charactersRestTemplateHelper,
+                      @Value("${rest-template.proxy.host}") String proxyHost) {
+        this.charactersRestTemplateHelper = charactersRestTemplateHelper;
+        this.proxyUrl = "http://" + proxyHost + ":8100/api/rick-and-morty/characters?pageNumber=";
+    }
 
     CharactersDto getResponse(int pageNumber) {
-        pageValidator.checkPageNumberValueIsLessOrEqualThanZeroAndMoreThanNumberOfPagesAndThrowExceptionIfIs(pageNumber,
-                NUMBER_OF_PAGES);
         if (pageNumber == 1) {
             CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
-            response.getInfo().setNextPage(APP_URL + ++pageNumber);
+            response.getInfo().setNextPage(proxyUrl + ++pageNumber);
             response.getInfo().setPreviousPage(null);
             return response;
         }
-        if (pageNumber <= 41) {
+        if (pageNumber <= NUMBER_OF_PAGES - 1) {
             CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
-            response.getInfo().setNextPage(APP_URL + ++pageNumber);
-            response.getInfo().setPreviousPage(APP_URL + (pageNumber - 2));
+            response.getInfo().setNextPage(proxyUrl + ++pageNumber);
+            response.getInfo().setPreviousPage(proxyUrl + (pageNumber - 2));
             return response;
         }
         CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
         response.getInfo().setNextPage(null);
-        response.getInfo().setPreviousPage(APP_URL + --pageNumber);
+        response.getInfo().setPreviousPage(proxyUrl + --pageNumber);
         return response;
     }
 }

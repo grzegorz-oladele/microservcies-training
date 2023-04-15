@@ -2,7 +2,6 @@ package pl.grzegorz.proxy.kanye;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import pl.grzegorz.proxy.reports.ReportDto;
 import pl.grzegorz.proxy.reports.ReportService;
@@ -24,7 +23,6 @@ class KanyeService {
         this.reportService = reportService;
     }
 
-    @Transactional
     public String getRandomQuote() {
         ReportDto reportDto = createReport();
         reportService.sendReport(reportDto);
