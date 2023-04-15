@@ -12,7 +12,7 @@ class CharactersRestTemplateHelper {
 
     private final RestTemplate restTemplate;
 
-    ResponseDto getAllCharacters(int pageNumber) {
-        return restTemplate.getForObject(URL + pageNumber, ResponseDto.class);
+    CharactersDto getAllCharacters(int pageNumber) {
+        return restTemplate.getForObject(URL + pageNumber, CharactersDto.class);
     }
 }

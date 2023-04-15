@@ -3,7 +3,7 @@ package pl.grzegorz.rickandmorty.characters;
 import lombok.Getter;
 
 @Getter
-class InfoOfPage {
+class PageInfo {
 
     private int count;
     private int pages;

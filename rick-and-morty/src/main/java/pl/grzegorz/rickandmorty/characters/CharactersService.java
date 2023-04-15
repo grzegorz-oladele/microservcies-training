@@ -11,21 +11,21 @@ class CharactersService {
 
     private final CharactersRestTemplateHelper charactersRestTemplateHelper;
 
-    ResponseDto getResponse(int pageNumber) {
+    CharactersDto getResponse(int pageNumber) {
         checkPageNumberValueIsLessThanOneAndMoreThanFortyTwoAndThrowExceptionIfIs(pageNumber);
         if (pageNumber == 1) {
-            ResponseDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
+            CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
             response.getInfo().setNextPage(APP_URL + ++pageNumber);
             response.getInfo().setPreviousPage(null);
             return response;
         }
         if (pageNumber <= 41) {
-            ResponseDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
+            CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
             response.getInfo().setNextPage(APP_URL + ++pageNumber);
             response.getInfo().setPreviousPage(APP_URL + (pageNumber - 2));
             return response;
         }
-        ResponseDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
+        CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
         response.getInfo().setNextPage(null);
         response.getInfo().setPreviousPage(APP_URL + --pageNumber);
         return response;

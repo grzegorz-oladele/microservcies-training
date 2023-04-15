@@ -5,8 +5,8 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-class ResponseDto {
+class CharactersDto {
 
-    private InfoOfPage info;
-    private List<CharacterDto> results;
+    private PageInfo info;
+    private List<FigureDto> results;
 }

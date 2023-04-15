@@ -3,7 +3,7 @@ package pl.grzegorz.rickandmorty.characters;
 import lombok.Getter;
 
 @Getter
-class CharacterDto {
+class FigureDto {
 
     private String name;
     private String status;

@@ -14,7 +14,7 @@ class CharactersController {
     private final CharactersService charactersService;
 
     @GetMapping
-    ResponseDto getResponse(@RequestParam(name = "pageNumber") int pageNumber) {
+    CharactersDto getResponse(@RequestParam(name = "pageNumber") int pageNumber) {
         return charactersService.getResponse(pageNumber);
     }
 }
