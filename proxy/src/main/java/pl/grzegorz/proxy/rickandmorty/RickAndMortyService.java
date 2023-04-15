@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.grzegorz.proxy.reports.ReportDto;
 import pl.grzegorz.proxy.reports.ReportService;
-import pl.grzegorz.proxy.rickandmorty.tools.PageValidator;
+import pl.grzegorz.proxy.tools.PageValidator;
 
 import java.time.LocalDateTime;
 
 @Service
 class RickAndMortyService {
 
-    private final String host;
     private final String url;
     private final RestTemplate restTemplate;
     private final ReportService reportService;
@@ -22,7 +21,6 @@ class RickAndMortyService {
                         RestTemplate restTemplate,
                         ReportService reportService,
                         PageValidator pageValidator) {
-        this.host = host;
         this.restTemplate = restTemplate;
         this.url = "http://" + host + ":8000";
         this.reportService = reportService;
@@ -38,7 +36,8 @@ class RickAndMortyService {
     }
 
     public CharactersDto getAllCharacters(int pageNumber) {
-        pageValidator.checkPageNumberValueIsLessOrEqualThanZeroAndMoreThanNumberOfPagesAndThrowExceptionIfIs(pageNumber, 42);
+        pageValidator.checkPageNumberValueIsLessOrEqualThanZeroAndMoreThanNumberOfPagesAndThrowExceptionIfIs(pageNumber,
+                42);
         ReportDto reportDto = createReport(pageNumber);
         reportService.sendReport(reportDto);
         return restTemplate.getForObject(url + "/characters?pageNumber=" + pageNumber, CharactersDto.class);

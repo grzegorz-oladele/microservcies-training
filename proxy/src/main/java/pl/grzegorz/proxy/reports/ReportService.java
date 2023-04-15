@@ -3,11 +3,7 @@ package pl.grzegorz.proxy.reports;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import pl.grzegorz.proxy.rickandmorty.tools.PageValidator;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import pl.grzegorz.proxy.tools.PageValidator;
 
 @Service
 public class ReportService implements ReportRequestService{
@@ -30,8 +26,15 @@ public class ReportService implements ReportRequestService{
     }
 
     @Override
-    public List<ReportOutputDto> getReports(int pageNumber) {
-        return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(url + "?pageNumber=" + pageNumber,
-                ReportOutputDto[].class))).toList();
+    public ReportDetailsOutputDto getReport(int pageNumber) {
+        int totalPages = getTotalPages();
+        pageValidator.checkPageNumberValueIsLessOrEqualThanZeroAndMoreThanNumberOfPagesAndThrowExceptionIfIs(pageNumber,
+                totalPages);
+        return restTemplate.getForObject(this.url + "?pageNumber=" + pageNumber,
+                ReportDetailsOutputDto.class);
+    }
+
+    private Integer getTotalPages() {
+        return restTemplate.getForObject(url + "/total-pages", Integer.class);
     }
 }

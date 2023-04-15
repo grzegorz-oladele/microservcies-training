@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportOutputDto {
+public class ReportDetailsOutputDto {
 
-    private String id;
-    private String serviceName;
-    private String dateOfRequest;
-    private int pageOfRequestList;
+    private ReportInfo info;
+    private List<ReportOutputDto> results;
 }

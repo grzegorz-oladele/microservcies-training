@@ -11,7 +11,7 @@ class LocationsService {
     private final String proxyUrl;
 
     LocationsService(LocationsRestTemplateHelper locationsRestTemplateHelper,
-                      @Value("${rest-template.proxy.host}") String proxyHost) {
+                     @Value("${rest-template.proxy.host}") String proxyHost) {
         this.locationsRestTemplateHelper = locationsRestTemplateHelper;
         this.proxyUrl = "http://" + proxyHost + ":8100/api/rick-and-morty/locations?pageNumber=";
     }

@@ -1,4 +1,4 @@
-package pl.grzegorz.proxy.rickandmorty.exceptions;
+package pl.grzegorz.proxy.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

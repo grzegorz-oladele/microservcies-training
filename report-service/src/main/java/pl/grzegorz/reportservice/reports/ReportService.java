@@ -1,22 +1,65 @@
 package pl.grzegorz.reportservice.reports;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import pl.grzegorz.reportservice.reports.dto.ReportDetailsOutputDto;
 import pl.grzegorz.reportservice.reports.dto.ReportDto;
+import pl.grzegorz.reportservice.reports.dto.ReportInfo;
 import pl.grzegorz.reportservice.reports.dto.ReportOutputDto;
 
-import java.util.List;
-
 @Service
-@RequiredArgsConstructor
 class ReportService {
 
     private static final int NUMBER_OF_REPORTS_PER_PAGE = 10;
     private final ReportRepository reportRepository;
+    private final String proxyUrl;
 
-    List<ReportOutputDto> getReports(int pageNumber) {
-        return reportRepository.findAllBy(PageRequest.of(pageNumber - 1, NUMBER_OF_REPORTS_PER_PAGE));
+    ReportService(ReportRepository reportRepository,
+                  @Value("${rest-template.proxy.host}") String proxyHost) {
+        this.reportRepository = reportRepository;
+        this.proxyUrl = "http://" + proxyHost + ":8100/api/reports?pageNumber=";
+    }
+
+    int getTotalPages() {
+        return reportRepository.findAllBy(PageRequest.of(0, NUMBER_OF_REPORTS_PER_PAGE)).getTotalPages();
+    }
+
+    ReportDetailsOutputDto getReport(int pageNumber) {
+        Page<ReportOutputDto> reportPage = reportRepository.findAllBy(PageRequest.of(pageNumber - 1,
+                NUMBER_OF_REPORTS_PER_PAGE));
+        ReportDetailsOutputDto reportDetailsOutputDto = new ReportDetailsOutputDto();
+        reportDetailsOutputDto.setResults(reportPage.getContent());
+        checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(pageNumber, reportPage);
+        setNextPageAndPreviousPage(pageNumber, reportPage, reportDetailsOutputDto);
+        return reportDetailsOutputDto;
+    }
+
+    private void setNextPageAndPreviousPage(int pageNumber, Page<ReportOutputDto> reportPage,
+                                            ReportDetailsOutputDto reportDetailsOutputDto) {
+        String nextPage;
+        String previousPage = null;
+        if (pageNumber == 1) {
+            nextPage = proxyUrl + ++pageNumber;
+        }
+        else if (pageNumber <= reportPage.getTotalPages() - 1) {
+            nextPage = proxyUrl + ++pageNumber;
+            previousPage = proxyUrl + (pageNumber - 2);
+        }
+        else {
+            nextPage = null;
+            previousPage = proxyUrl + --pageNumber;
+        }
+        reportDetailsOutputDto.setInfo(new ReportInfo(reportPage.getTotalElements(), reportPage.getTotalPages(),
+                nextPage, previousPage));
+    }
+
+    private void checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(int pageNumber,
+                                                                                              Page<ReportOutputDto> reportPage) {
+        if (pageNumber <=0 || pageNumber > reportPage.getTotalPages()) {
+            throw new IllegalArgumentException("Page number value isn't correct");
+        }
     }
 
     ReportOutputDto getReportById(String id) {

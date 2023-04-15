@@ -1,11 +1,11 @@
 package pl.grzegorz.reportservice.reports;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import pl.grzegorz.reportservice.reports.dto.ReportDetailsOutputDto;
 import pl.grzegorz.reportservice.reports.dto.ReportDto;
 import pl.grzegorz.reportservice.reports.dto.ReportOutputDto;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/reports")
@@ -15,8 +15,8 @@ class ReportController {
     private final ReportService reportService;
 
     @GetMapping
-    List<ReportOutputDto> getReports(@RequestParam(name = "pageNumber") int pageNumber) {
-        return reportService.getReports(pageNumber);
+    ReportDetailsOutputDto getReports(@RequestParam(name = "pageNumber") int pageNumber) {
+        return reportService.getReport(pageNumber);
     }
 
     @GetMapping("/{id}")
@@ -27,5 +27,10 @@ class ReportController {
     @PostMapping
     void addReport(@RequestBody ReportDto reportDto) {
         reportService.addReport(reportDto);
+    }
+
+    @GetMapping("/total-pages")
+    int getTotalPages() {
+        return reportService.getTotalPages();
     }
 }

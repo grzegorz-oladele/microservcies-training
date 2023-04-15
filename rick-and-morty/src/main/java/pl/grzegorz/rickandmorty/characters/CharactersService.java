@@ -16,7 +16,7 @@ class CharactersService {
         this.proxyUrl = "http://" + proxyHost + ":8100/api/rick-and-morty/characters?pageNumber=";
     }
 
-    CharactersDto getResponse(int pageNumber) {
+    CharactersDto getCharacters(int pageNumber) {
         if (pageNumber == 1) {
             CharactersDto response = charactersRestTemplateHelper.getAllCharacters(pageNumber);
             response.getInfo().setNextPage(proxyUrl + ++pageNumber);

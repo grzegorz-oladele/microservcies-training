@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ReportOutputDto {
+@NoArgsConstructor
+public class ReportInfo {
 
-    private String id;
-    private String serviceName;
-    private String dateOfRequest;
-    private int pageOfRequestList;
+    private long count;
+    private int pages;
+    private String nextPage;
+    private String previousPage;
 }

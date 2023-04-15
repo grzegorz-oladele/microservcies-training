@@ -1,4 +1,4 @@
-package pl.grzegorz.proxy.rickandmorty.tools;
+package pl.grzegorz.proxy.tools;
 
 import org.springframework.stereotype.Component;
 
