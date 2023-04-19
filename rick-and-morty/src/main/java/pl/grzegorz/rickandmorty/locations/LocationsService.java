@@ -32,7 +32,7 @@ class LocationsService {
         }
         LocationsDto response = locationsRestTemplateHelper.getLocations(pageNumber);
         response.getInfo().setNextPage(null);
-        response.getInfo().setPreviousPage(proxyUrl + --pageNumber);
+        response.getInfo().setPreviousPage(proxyUrl + (pageNumber - 1));
         return response;
     }
 }

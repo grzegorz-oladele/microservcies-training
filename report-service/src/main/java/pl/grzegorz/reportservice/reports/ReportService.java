@@ -9,6 +9,8 @@ import pl.grzegorz.reportservice.reports.dto.ReportDto;
 import pl.grzegorz.reportservice.reports.dto.ReportInfo;
 import pl.grzegorz.reportservice.reports.dto.ReportOutputDto;
 
+import java.util.Collections;
+
 @Service
 class ReportService {
 
@@ -31,33 +33,42 @@ class ReportService {
                 NUMBER_OF_REPORTS_PER_PAGE));
         ReportDetailsOutputDto reportDetailsOutputDto = new ReportDetailsOutputDto();
         reportDetailsOutputDto.setResults(reportPage.getContent());
-        checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(pageNumber, reportPage);
+        checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(pageNumber);
         setNextPageAndPreviousPage(pageNumber, reportPage, reportDetailsOutputDto);
         return reportDetailsOutputDto;
     }
 
     private void setNextPageAndPreviousPage(int pageNumber, Page<ReportOutputDto> reportPage,
                                             ReportDetailsOutputDto reportDetailsOutputDto) {
-        String nextPage;
+        String nextPage = null;
         String previousPage = null;
         if (pageNumber == 1) {
-            nextPage = proxyUrl + ++pageNumber;
-        }
-        else if (pageNumber <= reportPage.getTotalPages() - 1) {
+            nextPage = checkIfPageIsEqualOne(pageNumber, reportPage);
+        } else if (pageNumber <= reportPage.getTotalPages() - 1) {
             nextPage = proxyUrl + ++pageNumber;
             previousPage = proxyUrl + (pageNumber - 2);
-        }
-        else {
-            nextPage = null;
+        } else if (reportPage.getContent().isEmpty()) {
+            reportDetailsOutputDto.setResults(Collections.emptyList());
+            reportDetailsOutputDto.setInfo(new ReportInfo(0, 0, null, null));
+        } else {
             previousPage = proxyUrl + --pageNumber;
         }
         reportDetailsOutputDto.setInfo(new ReportInfo(reportPage.getTotalElements(), reportPage.getTotalPages(),
                 nextPage, previousPage));
     }
 
-    private void checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(int pageNumber,
-                                                                                              Page<ReportOutputDto> reportPage) {
-        if (pageNumber <=0 || pageNumber > reportPage.getTotalPages()) {
+    private String checkIfPageIsEqualOne(int pageNumber, Page<ReportOutputDto> reportPage) {
+        String nextPage;
+        if (reportPage.getTotalPages() > 1) {
+            nextPage = proxyUrl + ++pageNumber;
+            return nextPage;
+        } else {
+            return null;
+        }
+    }
+
+    private void checkPageNumberIsLessOrEqualZeroOrGreaterThanTotalPagesAndThrowExceptionIfIs(int pageNumber) {
+        if (pageNumber <= -1) {
             throw new IllegalArgumentException("Page number value isn't correct");
         }
     }

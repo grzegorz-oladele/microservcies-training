@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -17,16 +18,16 @@ class CustomExceptionHandler {
 
     private final HttpServletRequest request;
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(HttpServerErrorException.class)
     @ResponseStatus(BAD_REQUEST)
-    ErrorResponse handleIncorrectPageNumberError(IllegalArgumentException e) {
-        return getErrorResponse(e.getMessage(), BAD_REQUEST);
+    ErrorResponse handleIncorrectPageNumberError() {
+        return getErrorResponse();
     }
 
-    private ErrorResponse getErrorResponse(String message, HttpStatus status) {
+    private ErrorResponse getErrorResponse() {
         return ErrorResponse.builder()
-                .withMessage(message)
-                .withResponseCode(status.value())
+                .withMessage("Invalid page number")
+                .withResponseCode(HttpStatus.BAD_REQUEST.value())
                 .withTimestamp(LocalDateTime.now().toString())
                 .withPath(getCurrentUrlPath())
                 .build();

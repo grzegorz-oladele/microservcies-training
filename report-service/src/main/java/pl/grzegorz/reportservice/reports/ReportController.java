@@ -1,7 +1,6 @@
 package pl.grzegorz.reportservice.reports;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import pl.grzegorz.reportservice.reports.dto.ReportDetailsOutputDto;
 import pl.grzegorz.reportservice.reports.dto.ReportDto;
